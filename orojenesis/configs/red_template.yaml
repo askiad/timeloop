@@ -1,0 +1,17 @@
+problem:
+  instance:
+    M: 1
+    K: 1
+  shape:
+    data-spaces:
+    - name: Inputs
+      projection:
+      - - - M
+      - - - K
+    - name: Outputs
+      projection:
+      - - - M
+      read-write: true
+    dimensions:
+    - M
+    - K

@@ -1,0 +1,22 @@
+problem:
+  instance:
+    M: 1
+    K: 1
+  shape:
+    data-spaces:
+    - name: Weights
+      projection:
+      - - - M
+      - - - K
+    - name: Inputs
+      projection:
+      - - - M
+      - - - K
+    - name: Outputs
+      projection:
+      - - - M
+      - - - K
+      read-write: true
+    dimensions:
+    - M
+    - K
