@@ -1,0 +1,7 @@
+model_name: 'gpt3-6.7b-ar'
+seq_len: 1
+input_seq_len: 2048
+num_heads: 32
+d_proj: 4096
+d_fc: 16384 
+d: 4096 
