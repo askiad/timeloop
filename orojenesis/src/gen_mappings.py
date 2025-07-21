@@ -41,7 +41,7 @@ def run_einsums(chain, output_file, mapping_yaml, arch_yaml, force_rerun=False):
         if force_rerun or not preprocessed_csv.exists():
             if einsum["type"] == "Elementwise_2op":
                 utils.RunMapper(arch_yaml, workload_yaml, einsum["mapper"], rundir)
-            elif einsum["type"] == "BMM":
+            elif einsum["type"] == "BMM": # we assume num heads are run in parallel, einsum["prob_dims"]["H"] is prod of num_heads and batch
                 num_heads = einsum['num_heads']
                 bmm_arch_yaml = rundir / "arch.yaml"
                 arch = utils.parse_yaml(arch_yaml)
@@ -52,8 +52,14 @@ def run_einsums(chain, output_file, mapping_yaml, arch_yaml, force_rerun=False):
                 mapper_yaml = einsum["mapper"]
                 mapper = utils.parse_yaml(mapper_yaml)
                 for constraint in mapper["mapspace_constraints"]:
+                    found_spatial = False
                     if constraint['type'] == 'spatial':
                         constraint['factors'] = f'H={num_heads}'
+                        found_spatial = True
+
+                if not found_spatial:
+                    new_constraint = {'target': 'WeightBuffer', 'type': 'spatial', 'factors': f'H={num_heads} M=1 K=1 N=1', 'permutation': 'HMKN'}
+                    mapper['mapspace_constraints'].append(new_constraint)
 
                 utils.store_yaml(bmm_mapper_yaml, mapper)
                 utils.RunMapper(bmm_arch_yaml, workload_yaml, bmm_mapper_yaml, rundir)

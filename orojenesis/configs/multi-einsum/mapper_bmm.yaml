@@ -30,18 +30,17 @@ mapspace_constraints:
 
   - target: MainMemory
     type: temporal
-    factors: # K=1  # M free.
-    permutation: # KM # MNK
-
+    factors: 
+    permutation: ___H 
   - target: InputOutputBuffer
     type: temporal
     factors: K=1 N=1 H=1 #  assume two level all inclusive to reduce search time
-    permutation: M # NKM # shouldn't matter, but verify.
+    permutation: MHKN 
 
   - target: WeightBuffer
     type: temporal
     factors: M=1 # M=1 # K and N free.
-    permutation: HMKN # NKM # shouldn't matter, but verify.
+    permutation: HMKN 
 
   # WeightBuffer has no constraints on factors,
   # which creates a real mapspace. However, with
