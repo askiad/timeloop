@@ -287,7 +287,7 @@ def plot_dfs(
             )  # arrowprops=dict(arrowstyle="->", connectionstyle="arc3"))
 
             v = df.index.max()
-            line = ax.axvline(x=v, color="g", lw=1)
+            line = ax.axvline(x=v, color="gray", linestyle="--", lw=1)
             size_mb = v // 2**20
             ax.annotate(
                 f"Max effectual size = {size_mb}MB",
@@ -295,9 +295,10 @@ def plot_dfs(
                 annotation_clip=False,
                 clip_on=False,
                 va="center",
-                xy=(v, max_accesses * 0.03),
-                xytext=(v, max_accesses * 0.03),
-                fontsize=10,
+                xy=(v,  optimal_access_fused * 20),
+                xytext=(v,  optimal_access_fused * 20),
+                fontsize=8,
+                color="gray",
             )  # arrowprops=dict(arrowstyle="->", connectionstyle="arc3"))
 
     #         if  metric=='DRAM_Accesses':
@@ -686,7 +687,8 @@ def plot_accesses_comparison(
     v = df.index.max()
 
     if max_effect_size:
-        line = ax.axvline(x=v, color="black", lw=1)
+
+        line = ax.axvline(x=v, color="gray", linestyle="--", lw=1)
         size_mb = v // 2**20
         ax.annotate(
             f"Max effectual size = {size_mb}MB",
@@ -694,10 +696,12 @@ def plot_accesses_comparison(
             annotation_clip=False,
             clip_on=False,
             va="center",
-            xy=(v, max_accesses * y_max_effectual),
-                                # fused_results['orig_accesses'] = result['weight_accesses'] * weight_access_factor + result['input_accesses'] * input_factor * batch_size + result['output_accesses'] * output_factor * batch_size
-            xytext=(v, max_accesses * y_max_effectual),
-            fontsize=9,
+            xy=(v,  optimal_access_fused * 20),
+            xytext=(v,  optimal_access_fused * 20),
+            # xy=(v, max_accesses * y_max_effectual),
+            # xytext=(v, optimal_access * 8), #max_accesses * y_max_effectual),
+            fontsize=8,
+            color="gray",
         )  # arrowprops=dict(arrowstyle="->", connectionstyle="arc3"))
 
     h100_pcie = {
@@ -706,17 +710,22 @@ def plot_accesses_comparison(
         "L2": 52428800,
         "Reg": 29184 * 2**10,
         "L1/SMEM": 114 * 228 * 2**10,
+        "100MB": 100 * 2**20,
     }
     for idx, (k, v) in enumerate(h100_pcie.items()):
         if k not in plot_cache:
             continue
-        line = ax.axvline(x=v, color="black", linestyle=":", lw=1)
+        line = ax.axvline(x=v, color="gray", linestyle="--", lw=1)
         ax.annotate(
             k,
+            rotation=270,
+            annotation_clip=False,
+            clip_on=False,
             xy=(v, optimal_access_fused * 20),
-            xytext=(v * 0.4, optimal_access_fused * 20),
-            fontsize=6,
-            arrowprops=dict(arrowstyle="->", connectionstyle="arc3"),
+            xytext=(v, optimal_access_fused * 20),
+            fontsize=8,
+            color="gray",
+            # arrowprops=dict(arrowstyle="->", connectionstyle="arc3"),
         )
 
     first_legend = plt.legend(handles=[line1, line2], loc="upper left")
@@ -814,7 +823,7 @@ def plot_accesses_comparison(
         df_access.columns = [
             df_relax_io_label
         ]  # ['FOMT w/fusion partial K0 and partial Nn ']
-        df_access.plot(ax=ax, drawstyle=drawstype, alpha=0.8)
+        df_access.plot(ax=ax, drawstyle=drawstype, alpha=0.8, linestyle="-.")
 
     if df_relax_io_kn is not None:
         df_relax_io_kn, df_relax_io_kn_label = df_relax_io_kn
@@ -823,7 +832,7 @@ def plot_accesses_comparison(
         df_access.columns = [
             df_relax_io_kn_label
         ]  # ['FOMT w/ fusion partial K0, N0,  K1, Nn']
-        df_access.plot(ax=ax, drawstyle=drawstype, alpha=0.8)
+        df_access.plot(ax=ax, drawstyle=drawstype, alpha=0.7, linewidth=3, linestyle="-.")
 
 
     if df is not None:
